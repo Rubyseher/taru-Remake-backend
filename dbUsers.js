@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 
 const users =mongoose.Schema({
-    name:String,
+    fullName:String,
     type:String,
     age:Number,
     bloodGroup:String,
-    phone:Number,
+    phone:{type:Number,unique:true},
+    password:String,
     address:String,
     dob:String,
     vitals:[

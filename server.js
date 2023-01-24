@@ -6,6 +6,8 @@ import doctors from './dbDoctors.js'
 import users from './dbUsers.js'
 import Cors from "cors"
 
+import bcrypt from "bcryptjs"
+
 const app = express()
 const port = process.env.port || 8001
 const connectionUrl = 'mongodb+srv://admin:5OqQw0B1zLNvDhYt@cluster0.npypzlq.mongodb.net/?retryWrites=true&w=majority'
@@ -81,15 +83,36 @@ app.get('/doc', (req, res) => {
     })
 })
 
-app.get('/login', (req, res) => {
-    users.find((err, data) => {
-        if (err) {
-            res.status(500).send(err)
-        }
-        else {
-            res.status(200).send(data)
-        }
-    })
+app.post('/login', async (req, res) => {
+    const { fullName,
+        age,
+        bloodGroup,
+        password,
+        phone,
+        address,
+        dob,
+    } = req.body
+
+    const encryptedPassword=await bcrypt.hash(password,10)
+    try {
+        const oldUser=await users.findOne({phone})
+
+        if(oldUser)
+            return res.send({error:"User exist"})
+        await users.create({
+            fullName,
+            age,
+            bloodGroup,
+            password:encryptedPassword,
+            phone,
+            address,
+            dob,
+        })
+        res.send({ status: "ok" })
+    } catch (error) {
+        res.send({ status: "error" })
+
+    }
 })
 
 app.get('/booking', (req, res) => {

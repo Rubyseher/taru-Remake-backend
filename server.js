@@ -5,8 +5,10 @@ import patientsToday from "./dbPatientsToday.js"
 import doctors from './dbDoctors.js'
 import users from './dbUsers.js'
 import Cors from "cors"
-
+import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs"
+
+const JWT_SECRET = "3B8MSS$6(N2%%1NDhhdf6D091%7@@7da#0jdkjj%*jds*QQJUS9([Ra}"
 
 const app = express()
 const port = process.env.port || 8001
@@ -83,7 +85,7 @@ app.get('/doc', (req, res) => {
     })
 })
 
-app.post('/login', async (req, res) => {
+app.post('/register', async (req, res) => {
     const { fullName,
         age,
         bloodGroup,
@@ -93,17 +95,17 @@ app.post('/login', async (req, res) => {
         dob,
     } = req.body
 
-    const encryptedPassword=await bcrypt.hash(password,10)
+    const encryptedPassword = await bcrypt.hash(password, 10)
     try {
-        const oldUser=await users.findOne({phone})
+        const oldUser = await users.findOne({ phone })
 
-        if(oldUser)
-            return res.send({error:"User exist"})
+        if (oldUser)
+            return res.send({ error: "User exist" })
         await users.create({
             fullName,
             age,
             bloodGroup,
-            password:encryptedPassword,
+            password: encryptedPassword,
             phone,
             address,
             dob,
@@ -113,6 +115,27 @@ app.post('/login', async (req, res) => {
         res.send({ status: "error" })
 
     }
+})
+
+app.post('/login', async (req, res) => {
+    const {
+        password,
+        phone,
+    } = req.body
+
+    const oldUser = await users.findOne({ phone })
+
+    if (!oldUser)
+        return res.send({ error: "User not found" })
+
+    if (await bcrypt.compare(password, oldUser.password)) {
+        const token = jwt.sign({}, JWT_SECRET)
+        if (res.status(201))
+            return res.json({ status: "ok", data: token })
+        else
+            return res.json({ error: "error" })
+    }
+    else return res.json({status:'error',error:'invalid password'})
 })
 
 app.get('/booking', (req, res) => {

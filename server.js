@@ -48,6 +48,9 @@ app.post('/rmp', (req, res) => {
     })
 })
 
+
+
+
 // app.delete('/doc',(req,res)=>{
 //     try{
 //         patientsToday.remove({_id: mongodb.ObjectID( req.params.id)});
@@ -126,16 +129,36 @@ app.post('/login', async (req, res) => {
     const oldUser = await users.findOne({ phone })
 
     if (!oldUser)
-        return res.send({ error: "User not found" })
+        return res.json({ error: "User not found" })
 
     if (await bcrypt.compare(password, oldUser.password)) {
-        const token = jwt.sign({}, JWT_SECRET)
+        const token = jwt.sign({phone:oldUser.phone}, JWT_SECRET)
         if (res.status(201))
             return res.json({ status: "ok", data: token })
         else
             return res.json({ error: "error" })
     }
-    else return res.json({status:'error',error:'invalid password'})
+   res.json({status:'error',error:'invalid password'})
+})
+
+app.post("/patient",async(req, res)=> {
+    const {token} =req.body
+    try {
+        const user = jwt.verify(token, JWT_SECRET)
+        console.log(user);
+        const userPhone =user.phone
+        users.findOne({phone:userPhone})
+        .then((data)=>{
+            console.log("hi");
+            res.send({status:"ok",data:data})
+        }).catch((error)=>{
+            console.log("no");
+            res.send({status:"error",data:error})
+        })
+    } catch (error) {
+        console.log("noo");
+        
+    }
 })
 
 app.get('/booking', (req, res) => {

@@ -145,18 +145,14 @@ app.post("/patient",async(req, res)=> {
     const {token} =req.body
     try {
         const user = jwt.verify(token, JWT_SECRET)
-        console.log(user);
         const userPhone =user.phone
         users.findOne({phone:userPhone})
         .then((data)=>{
-            console.log("hi");
             res.send({status:"ok",data:data})
         }).catch((error)=>{
-            console.log("no");
             res.send({status:"error",data:error})
         })
     } catch (error) {
-        console.log("noo");
         
     }
 })

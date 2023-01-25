@@ -4,6 +4,7 @@ const patients =mongoose.Schema({
     name:String,
     age:String,
     doc:String,
+    date:String,
     meet:String,
     time:String,
 })

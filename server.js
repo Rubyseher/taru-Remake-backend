@@ -101,9 +101,9 @@ app.post('/register', async (req, res) => {
     const encryptedPassword = await bcrypt.hash(password, 10)
     try {
         const oldUser = await users.findOne({ phone })
-
         if (oldUser)
             return res.send({ error: "User exist" })
+
         await users.create({
             fullName,
             age,
@@ -132,28 +132,28 @@ app.post('/login', async (req, res) => {
         return res.json({ error: "User not found" })
 
     if (await bcrypt.compare(password, oldUser.password)) {
-        const token = jwt.sign({phone:oldUser.phone}, JWT_SECRET)
+        const token = jwt.sign({ phone: oldUser.phone }, JWT_SECRET)
         if (res.status(201))
             return res.json({ status: "ok", data: token })
         else
             return res.json({ error: "error" })
     }
-   res.json({status:'error',error:'invalid password'})
+    res.json({ status: 'error', error: 'invalid password' })
 })
 
-app.post("/patient",async(req, res)=> {
-    const {token} =req.body
+app.post("/patient", async (req, res) => {
+    const { token } = req.body
     try {
         const user = jwt.verify(token, JWT_SECRET)
-        const userPhone =user.phone
-        users.findOne({phone:userPhone})
-        .then((data)=>{
-            res.send({status:"ok",data:data})
-        }).catch((error)=>{
-            res.send({status:"error",data:error})
-        })
+        const userPhone = user.phone
+        users.findOne({ phone: userPhone })
+            .then((data) => {
+                res.send({ status: "ok", data: data })
+            }).catch((error) => {
+                res.send({ status: "error", data: error })
+            })
     } catch (error) {
-        
+
     }
 })
 
@@ -168,15 +168,51 @@ app.get('/booking', (req, res) => {
     })
 })
 
-app.post('/booking', (req, res) => {
-    const doctorsList = req.body
-    patientsToday.create(doctorsList, (err, data) => {
-        if (err) {
-            res.status(500).send(err)
-        }
-        else {
-            res.status(201).send(data)
-        }
-    })
+app.post("/booking", async (req, res) => {
+    const { token, doc, time, date, mlink ,specialization} = req.body
+    try {
+        const user = jwt.verify(token, JWT_SECRET)
+        const userPhone = user.phone
+
+        users.findOne({ phone: userPhone })
+            .then((data) => {
+                users.updateOne(
+                    { "phone": userPhone },
+                    {
+                        $set: {
+                            "appointments": {
+                                date,
+                                doc,
+                                meet: mlink,
+                                time,
+                                specialization
+                            }
+                        }
+                    }
+                ).then((d) => {
+                    patientsToday.create(
+                        {
+                            name: data.fullName,
+                            age: data.age,
+                            doc,
+                            date,
+                            meet: mlink,
+                            time,
+                        }
+                    )
+                })
+                .then(()=>{
+                    res.send({ status: "ok", data: data })
+                }).catch((e) => {
+                    res.send({ status: "error", data: e })
+                })
+
+            }).catch((error) => {
+                res.send({ status: "error", data: error })
+            })
+
+    } catch (error) {
+
+    }
 })
 app.listen(port, () => console.log(`listening on port ${port}`))

@@ -14,7 +14,14 @@ const users =mongoose.Schema({
         bp :String,
         prescription:String
         }
-    ]
+    ],
+    appointments:[{
+        date:String,
+        doc:String,
+        meet:String,
+        time:String,
+        specialization:String
+    }]
 })
 
 export default mongoose.model('users',users)

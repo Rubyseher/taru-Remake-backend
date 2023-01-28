@@ -88,6 +88,14 @@ app.get('/doc', (req, res) => {
     })
 })
 
+app.get('/encrypt',async (req, res) => {
+
+
+    const encryptedPassword = await bcrypt.hash("1234040891", 10)
+    res.send({ status: "ok" ,data:encryptedPassword})
+
+})
+
 app.post('/register', async (req, res) => {
     const { fullName,
         age,
@@ -108,6 +116,7 @@ app.post('/register', async (req, res) => {
             fullName,
             age,
             bloodGroup,
+            type:'patient',
             password: encryptedPassword,
             phone,
             address,

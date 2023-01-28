@@ -8,6 +8,7 @@ const users =mongoose.Schema({
     phone:{type:Number,unique:true},
     password:String,
     address:String,
+    dob:String,
     vitals:[
         { date :String, 
         weight :String, 

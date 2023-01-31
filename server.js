@@ -1,27 +1,16 @@
 import express from 'express'
 import mongoose from 'mongoose'
-import freeDocNotifications from "../dbFreeDocNoti.js"
-import patientsToday from "../dbPatientsToday.js"
-import doctors from '../dbDoctors.js'
-import users from '../dbUsers.js'
+import freeDocNotifications from "./dbFreeDocNoti.js"
+import patientsToday from "./dbPatientsToday.js"
+import doctors from './dbDoctors.js'
+import users from './dbUsers.js'
 import Cors from "cors"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs"
-import serverless from "serverless-http"
 
 const JWT_SECRET =process.env.JWT_SECRET
 
 const app = express()
-const router = express.Router();
-
-router.get("/", (req, res) => {
-    res.json({
-      hello: "hi!"
-    });
-  });
-
-  app.use(`/.netlify/functions/api`, router);
-
 const port = process.env.port || 8001
 const connectionUrl = process.env.connectionUrl
 
@@ -222,6 +211,3 @@ app.post("/booking", async (req, res) => {
     }
 })
 app.listen(port, () => console.log(`listening on port ${port}`))
-
-module.exports = app;
-module.exports.handler = serverless(app);

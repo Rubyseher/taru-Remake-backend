@@ -7,12 +7,19 @@ import users from './dbUsers.js'
 import Cors from "cors"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs"
-
-const JWT_SECRET = "3B8MSS$6(N2%%1NDhhdf6D091%7@@7da#0jdkjj%*jds*QQJUS9([Ra}"
+import dotenv from 'dotenv'
+dotenv.config()
 
 const app = express()
+
 const port = process.env.port || 8001
-const connectionUrl = 'mongodb+srv://admin:5OqQw0B1zLNvDhYt@cluster0.npypzlq.mongodb.net/?retryWrites=true&w=majority'
+// const JWT_SECRET = "3B8MSS$6(N2%%1NDhhdf6D091%7@@7da#0jdkjj%*jds*QQJUS9([Ra}"
+const JWT_SECRET = process.env.JWT_SECRETS
+// const connectionUrl = 'mongodb+srv://admin:5OqQw0B1zLNvDhYt@cluster0.npypzlq.mongodb.net/?retryWrites=true&w=majority'
+const connectionUrl = process.env.CONNECTION_URL
+console.log("connectionUrl",connectionUrl);
+console.log("connectionUrl",port);
+console.log("connectionUrl",JWT_SECRET);
 
 app.use(express.json())
 app.use(Cors())

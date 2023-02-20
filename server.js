@@ -8,17 +8,18 @@ import Cors from "cors"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs"
 
-const JWT_SECRET =process.env.JWT_SECRET
+const JWT_SECRET = "3B8MSS$6(N2%%1NDhhdf6D091%7@@7da#0jdkjj%*jds*QQJUS9([Ra}"
 
 const app = express()
 const port = process.env.port || 8001
-const connectionUrl = process.env.connectionUrl
+const connectionUrl = 'mongodb+srv://admin:5OqQw0B1zLNvDhYt@cluster0.npypzlq.mongodb.net/?retryWrites=true&w=majority'
 
 app.use(express.json())
 app.use(Cors())
 
 mongoose.connect(connectionUrl, {
     useNewUrlParser: true,
+    // useCreateIndex:true,
     useUnifiedTopology: true
 })
 
@@ -46,6 +47,19 @@ app.post('/rmp', (req, res) => {
         }
     })
 })
+
+
+
+
+// app.delete('/doc',(req,res)=>{
+//     try{
+//         patientsToday.remove({_id: mongodb.ObjectID( req.params.id)});
+//         return res.status(200).json({ success: true, msg: `Product Deleted ${req.params.id}` });
+//     }
+//     catch(err){
+//         console.error(err);
+//     }
+// })
 
 app.delete('/doc/:id', function (req, res) {
     let deleteID = req.params.id

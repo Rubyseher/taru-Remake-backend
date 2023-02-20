@@ -16,10 +16,8 @@ const connectionUrl = 'mongodb+srv://admin:5OqQw0B1zLNvDhYt@cluster0.npypzlq.mon
 
 app.use(express.json())
 app.use(Cors())
-
 mongoose.connect(connectionUrl, {
     useNewUrlParser: true,
-    // useCreateIndex:true,
     useUnifiedTopology: true
 })
 
@@ -89,8 +87,6 @@ app.get('/doc', (req, res) => {
 })
 
 app.get('/encrypt',async (req, res) => {
-
-
     const encryptedPassword = await bcrypt.hash("1234040891", 10)
     res.send({ status: "ok" ,data:encryptedPassword})
 
@@ -224,4 +220,5 @@ app.post("/booking", async (req, res) => {
 
     }
 })
+
 app.listen(port, () => console.log(`listening on port ${port}`))

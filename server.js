@@ -7,27 +7,25 @@ import users from './dbUsers.js'
 import Cors from "cors"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs"
-import dotenv from 'dotenv'
-import serverlessHttp from 'serverless-http'
-dotenv.config()
+
+const JWT_SECRET = "3B8MSS$6(N2%%1NDhhdf6D091%7@@7da#0jdkjj%*jds*QQJUS9([Ra}"
 
 const app = express()
-const router = express.Router()
-
 const port = process.env.port || 8001
-const JWT_SECRET = process.env.JWT_SECRETS
-const connectionUrl = process.env.CONNECTION_URL
+const connectionUrl = 'mongodb+srv://admin:5OqQw0B1zLNvDhYt@cluster0.npypzlq.mongodb.net/?retryWrites=true&w=majority'
 
 app.use(express.json())
 app.use(Cors())
+
 mongoose.connect(connectionUrl, {
     useNewUrlParser: true,
+    // useCreateIndex:true,
     useUnifiedTopology: true
 })
 
-router.get("/", (req, res) => res.status(200).send("wassup doc"))
+app.get("/", (req, res) => res.status(200).send("wassup doc"))
 
-router.get('/rmp', (req, res) => {
+app.get('/rmp', (req, res) => {
     freeDocNotifications.find((err, data) => {
         if (err) {
             res.status(500).send(err)
@@ -38,7 +36,7 @@ router.get('/rmp', (req, res) => {
     })
 })
 
-router.post('/rmp', (req, res) => {
+app.post('/rmp', (req, res) => {
     const freeDocNotification = req.body
     freeDocNotifications.create(freeDocNotification, (err, data) => {
         if (err) {
@@ -53,7 +51,7 @@ router.post('/rmp', (req, res) => {
 
 
 
-// router.delete('/doc',(req,res)=>{
+// app.delete('/doc',(req,res)=>{
 //     try{
 //         patientsToday.remove({_id: mongodb.ObjectID( req.params.id)});
 //         return res.status(200).json({ success: true, msg: `Product Deleted ${req.params.id}` });
@@ -63,7 +61,7 @@ router.post('/rmp', (req, res) => {
 //     }
 // })
 
-router.delete('/doc/:id', function (req, res) {
+app.delete('/doc/:id', function (req, res) {
     let deleteID = req.params.id
     patientsToday.findOneAndDelete({ _id: deleteID }, function (err, doc) {
         if (err) {
@@ -79,7 +77,7 @@ router.delete('/doc/:id', function (req, res) {
     });
 })
 
-router.get('/doc', (req, res) => {
+app.get('/doc', (req, res) => {
     patientsToday.find((err, data) => {
         if (err) {
             res.status(500).send(err)
@@ -91,12 +89,14 @@ router.get('/doc', (req, res) => {
 })
 
 app.get('/encrypt',async (req, res) => {
+
+
     const encryptedPassword = await bcrypt.hash("1234040891", 10)
     res.send({ status: "ok" ,data:encryptedPassword})
 
 })
 
-router.post('/register', async (req, res) => {
+app.post('/register', async (req, res) => {
     const { fullName,
         age,
         bloodGroup,
@@ -129,7 +129,7 @@ router.post('/register', async (req, res) => {
     }
 })
 
-router.post('/login', async (req, res) => {
+app.post('/login', async (req, res) => {
     const {
         password,
         phone,
@@ -150,7 +150,7 @@ router.post('/login', async (req, res) => {
     res.json({ status: 'error', error: 'invalid password' })
 })
 
-router.post("/patient", async (req, res) => {
+app.post("/patient", async (req, res) => {
     const { token } = req.body
     try {
         const user = jwt.verify(token, JWT_SECRET)
@@ -166,7 +166,7 @@ router.post("/patient", async (req, res) => {
     }
 })
 
-router.get('/booking', (req, res) => {
+app.get('/booking', (req, res) => {
     doctors.find((err, data) => {
         if (err) {
             res.status(500).send(err)
@@ -177,7 +177,7 @@ router.get('/booking', (req, res) => {
     })
 })
 
-router.post("/booking", async (req, res) => {
+app.post("/booking", async (req, res) => {
     const { token, doc, time, date, mlink ,specialization} = req.body
     try {
         const user = jwt.verify(token, JWT_SECRET)
@@ -224,5 +224,4 @@ router.post("/booking", async (req, res) => {
 
     }
 })
-
 app.listen(port, () => console.log(`listening on port ${port}`))

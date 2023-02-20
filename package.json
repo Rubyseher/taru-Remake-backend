@@ -2,23 +2,20 @@
   "name": "memo-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "express/api.js",
+  "main": "server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-      "build": "netlify-lambda build express",
-      "start": "nodemon server-local.js"
+    "start": "node server.js",
+    "build": "npm i"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^6.4.7",
-    "netlify-lambda": "^2.0.15",
-    "serverless-http": "^3.1.1"
+    "mongoose": "^6.4.7"
   }
 }
